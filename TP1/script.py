@@ -2,8 +2,8 @@ import pandas as pd
 
 # reading CSV file
 df = pd.read_csv("logSupercomputador.csv")
-
-
+numero_processos_total = len(df.index)
+print(numero_processos_total)
 # Calcular InterArrivalTime
 
 def calcular_estatisticas_gerais():
@@ -40,31 +40,40 @@ def calcular_estatisticas_gerais():
 # Bloco 6, 1551 <= x <= 3150
 # Bloco 7, 3151 <= x <= 6350
 # Bloco 8, 6351 <= x <= 12750
-# Bloco 9, 12750 <= x 
-intervalos_menores = [0, 51, 151, 351, 751, 1551, 3151, 6351]
-intervalos_maiores = [50, 150 , 350, 750, 1550, 3150, 6350, 12750]
+# Bloco 9, 12751 <= x 25550
+# Bloco 10, 25.551 <= x <= 51.150
+# Bloco 11, 51.151 <= x <= 102.350
+# Bloco 12, 102.351 <= x
+
+intervalos_menores = [0, 51, 151, 351, 751, 1551, 3151, 6351, 12751, 25551, 51151]
+intervalos_maiores = [50, 150 , 350, 750, 1550, 3150, 6350, 12750, 25550, 51150, 102350]
 def calcular_estatisticas_por_bloco():
     bloco = 1
-    for x in range(9):
+    for x in range(12):
         print('-------------------------------')
         print('Bloco: ', bloco)
-        if bloco == 9:
-            print('Intervalo menor: 12750')
-            df_bloco = df.loc[(df['ExeTime'] >= 12750)]
+        if bloco == 12:
+            print('Intervalo menor: 102.351')
+            df_bloco = df.loc[(df['ExeTime'] >= 102351)]
         else:
             intervalo_menor = intervalos_menores[x]
             intervalo_maior = intervalos_maiores[x]
             print('Intervalo menor: ', intervalo_menor)
             print('Intervalo maior: ', intervalo_maior)
             df_bloco = df.loc[(df['ExeTime'] >= intervalo_menor) & (df['ExeTime'] <= intervalo_maior)]
+        
         bloco_media = df_bloco['ExeTime'].mean()
         bloco_desviopadrao = df_bloco['ExeTime'].std()
         bloco_coeficientevariacao = (bloco_desviopadrao/bloco_media)
+
+        numero_processos_por_bloco = len(df_bloco.index)
+        print('Numero Processos:', numero_processos_por_bloco)
+        porcentagem = (numero_processos_por_bloco/numero_processos_total) * 100
+        print('Porcentagem de processos do total: ', round(porcentagem, 2))
         print('Média: ', round(bloco_media, 2))
         print('Desvio padrão: ', round(bloco_desviopadrao, 2))
         print('Coeficiente de variação: ', round(bloco_coeficientevariacao, 2))
         bloco += 1
-
 
 
 
